@@ -84,7 +84,7 @@ const Profile = () => {
       toast.error(error?.response?.data?.message || "Something went wrong");
     }
   };
-
+  const confirmedBookings = bookings.filter((b) => b.status === "confirmed");
   return (
     <Layout>
       <div className="container py-5">
@@ -107,7 +107,7 @@ const Profile = () => {
           </p>
           <p>
             <strong>Total tikets: </strong>
-            {bookings.length || 0}
+            {confirmedBookings || 0}
           </p>
           {/* Logout Button */}
           <button className="btn btn-danger w-100" onClick={handleLogout}>
@@ -120,11 +120,11 @@ const Profile = () => {
 
         {loading ? (
           <Loader text="Loading your bookings..." />
-        ) : bookings.length === 0 ? (
+        ) : confirmedBookings.length === 0 ? (
           <p className="text-muted">You have no bookings yet.</p>
         ) : (
           <div className="row g-3">
-            {bookings.map((booking) => (
+            {confirmedBookings.map((booking) => (
               <div key={booking._id} className="col-md-4">
                 <div className="card shadow-sm p-3 h-100">
                   <h5 className="card-title">{booking.eventId?.title}</h5>

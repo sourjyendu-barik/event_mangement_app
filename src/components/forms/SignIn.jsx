@@ -4,6 +4,8 @@ import TextBtn from "../reusableComponents/TextBtn";
 import InputComponent from "../reusableFormComponents/InputComponent";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import { AxiosInstance } from "../../api/AxiosInstance";
+import { ENDPOINT } from "../../api/Endpoints";
 const SignIn = ({ authChange }) => {
   const [formData, setFormData] = useState({
     name: "",
@@ -20,10 +22,7 @@ const SignIn = ({ authChange }) => {
     e.preventDefault();
     console.log("SignUp Data:", formData);
     try {
-      const { data } = await axios.post(
-        "http://localhost:5000/auth/signin",
-        formData,
-      );
+      const { data } = await AxiosInstance.post(ENDPOINT.SIGNIN, formData);
       // console.log(data);
       setFormData({ email: "", password: "", name: "", role: "user" });
       toast.success("User register in successfull");

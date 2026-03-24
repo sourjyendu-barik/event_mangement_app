@@ -44,7 +44,23 @@ const AuthProvider = ({ children }) => {
 
   // Fetch user on app load / refresh
   useEffect(() => {
-    getUser();
+    let isMounted = true;
+
+    const fetchUser = async () => {
+      try {
+        const res = await AxiosInstance.get(ENDPOINT.ME);
+        if (isMounted) setUser(res?.data?.user);
+      } catch {
+        if (isMounted) setUser(null);
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    };
+    fetchUser();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   return (
