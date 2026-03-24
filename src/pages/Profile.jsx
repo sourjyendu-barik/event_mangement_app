@@ -1,49 +1,3 @@
-// // Profile.jsx
-// import React from "react";
-// import Layout from "../components/LayOut/Layout";
-// import { useAuthContext } from "../context/AuthContext";
-// import { toast } from "react-toastify";
-// const Profile = () => {
-//   const { user, logout } = useAuthContext();
-
-//   const handleLogout = async () => {
-//     try {
-//       await logout();
-//       toast.success("User logged out successfullys");
-//     } catch (error) {
-//       console.log(error);
-//       toast.error(error?.response?.data?.message || "Something went wrong");
-//     }
-//   };
-
-//   return (
-//     <Layout>
-//       <div className="container py-5 text-center">
-//         <div
-//           className="card shadow-sm p-4 mx-auto"
-//           style={{ maxWidth: "400px" }}
-//         >
-//           <div
-//             className="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold mx-auto mb-3"
-//             style={{ width: "70px", height: "70px", fontSize: "24px" }}
-//           >
-//             {user.name.charAt(0).toUpperCase()}
-//           </div>
-
-//           {/* Username */}
-//           <h4 className="mb-3">{user.name}</h4>
-
-//           {/* Logout Button */}
-//           <button className="btn btn-danger w-100" onClick={handleLogout}>
-//             Logout
-//           </button>
-//         </div>
-//       </div>
-//     </Layout>
-//   );
-// };
-
-// export default Profile;
 import React, { useEffect, useState } from "react";
 import Layout from "../components/LayOut/Layout";
 import { useAuthContext } from "../context/AuthContext";
@@ -84,7 +38,8 @@ const Profile = () => {
       toast.error(error?.response?.data?.message || "Something went wrong");
     }
   };
-  const confirmedBookings = bookings.filter((b) => b.status === "confirmed");
+  const confirmedBookings =
+    bookings?.filter((b) => b.status === "confirmed") || [];
   return (
     <Layout>
       <div className="container py-5">
@@ -107,7 +62,7 @@ const Profile = () => {
           </p>
           <p>
             <strong>Total tikets: </strong>
-            {confirmedBookings || 0}
+            {confirmedBookings.length || 0}
           </p>
           {/* Logout Button */}
           <button className="btn btn-danger w-100" onClick={handleLogout}>
