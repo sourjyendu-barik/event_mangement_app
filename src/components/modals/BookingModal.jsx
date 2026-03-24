@@ -3,22 +3,67 @@ import ModalWrapper from "./ModalWrapper";
 import { AxiosInstance } from "../../api/AxiosInstance";
 import { ENDPOINT } from "../../api/Endpoints";
 import { toast } from "react-toastify";
-
+import { useAuthContext } from "../../context/AuthContext";
 const BookingModal = ({ event, onClose }) => {
+  const { user } = useAuthContext();
   const [count, setCount] = useState(1);
   const [loading, setLoading] = useState(false);
-
+  // endpoint for create oredrid -> CREATE_ORDER_ID
+  //endpoint for verify -> VERIFY_PAYMENT
   const handleBooking = async () => {
     try {
       setLoading(true);
+      // 🧾 Step 1: Create order (backend)
+      const res = await AxiosInstance.post(
+        ENDPOINT.CREATE_ORDER_ID, // createBooking API
+        {
+          eventId: event._id,
+          ticketCount: count,
+        },
+      );
 
-      await AxiosInstance.post(ENDPOINT.BOOKINGS, {
-        eventId: event._id,
-        ticketCount: count,
-      });
+      const { orderId, amount, bookingId } = res.data;
+      // ❗ check Razorpay loaded
+      if (!window.Razorpay) {
+        toast.error("Payment system not loaded");
+        return;
+      }
+      // 💳 Step 2: Open Razorpay
+      const options = {
+        key: "rzp_test_SUzQzZqRJwqMQc",
+        amount,
+        currency: "INR",
+        name: "Event Booking",
+        description: event.title,
+        order_id: orderId,
+        prefill: {
+          name: user?.name,
+          email: user?.email,
+        },
+        handler: async function (response) {
+          try {
+            // 🔐 Step 3: Verify payment
+            await AxiosInstance.post(ENDPOINT.VERIFY_PAYMENT, {
+              ...response,
+              bookingId,
+            });
 
-      toast.success("Booking successful!");
-      onClose();
+            toast.success("Payment Successful 🎉");
+            onClose();
+          } catch (err) {
+            toast.error("Payment verification failed");
+          }
+        },
+
+        modal: {
+          ondismiss: function () {
+            toast.error("Payment cancelled ❌");
+          },
+        },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
     } catch (err) {
       toast.error(err.response?.data?.message || "Booking failed");
     } finally {
@@ -57,7 +102,7 @@ const BookingModal = ({ event, onClose }) => {
         onClick={handleBooking}
         disabled={loading}
       >
-        {loading ? "Booking..." : "Confirm Booking"}
+        {loading ? "Booking..." : "Pay & Book"}
       </button>
     </ModalWrapper>
   );

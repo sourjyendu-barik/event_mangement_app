@@ -31,7 +31,7 @@ const Header = () => {
           {/* Navbar Items */}
           <div className="collapse navbar-collapse" id="navbarNav">
             <ul className="navbar-nav ms-auto gap-lg-3 text-center">
-              {[
+              {/* {[
                 { path: "/", name: "Home" },
                 { path: "/about", name: "About" },
                 { path: "/services", name: "Services" },
@@ -50,8 +50,8 @@ const Header = () => {
                     {item.name}
                   </NavLink>
                 </li>
-              ))}
-              {user?.role === "user" && (
+              ))} */}
+              {user?.role === "admin" && (
                 <li className="nav-item">
                   <NavLink
                     to="/admin"

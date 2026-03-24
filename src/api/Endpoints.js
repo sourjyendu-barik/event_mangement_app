@@ -6,4 +6,6 @@ export const ENDPOINT = {
   ME: "me",
   LOGOUT: "auth/logout",
   BOOKINGS: "tickets",
+  CREATE_ORDER_ID: "tickets/createOrderId",
+  VERIFY_PAYMENT: "tickets/verify",
 };
